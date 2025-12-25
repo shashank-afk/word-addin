@@ -2,44 +2,35 @@
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
-           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
            xsi:type="TaskPaneApp">
 
-  <!-- Unique ID for your add-in -->
   <Id>11111111-1111-1111-1111-111111111111</Id>
-
   <Version>1.0.0.0</Version>
-  <ProviderName>Your Name or Company</ProviderName>
+  <ProviderName>Internal Test</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
 
-  <!-- Display info -->
-  <DisplayName DefaultValue="Test Word Add-in"/>
-  <Description DefaultValue="A simple test Word add-in for internal deployment."/>
+  <DisplayName DefaultValue="Internal Test Add-in"/>
+  <Description DefaultValue="Internal Word Add-in deployed via Admin Center"/>
 
-  <!-- Icons -->
   <IconUrl DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
   <HighResolutionIconUrl DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
-  <SupportUrl DefaultValue="https://word-addin-phi.vercel.app/support.html"/>
+  <SupportUrl DefaultValue="https://word-addin-phi.vercel.app"/>
 
-  <!-- App domains -->
   <AppDomains>
     <AppDomain>https://word-addin-phi.vercel.app</AppDomain>
   </AppDomains>
 
-  <!-- Supported hosts -->
   <Hosts>
     <Host Name="Document"/>
   </Hosts>
 
-  <!-- Default settings -->
   <DefaultSettings>
     <SourceLocation DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
   </DefaultSettings>
 
-  <!-- Permissions -->
   <Permissions>ReadWriteDocument</Permissions>
 
-  <!-- VersionOverrides for modern taskpane add-ins -->
+  <!-- REQUIRED FOR ADMIN CENTER -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
                     xsi:type="VersionOverridesV1_0"
                     Version="1.0">
@@ -47,21 +38,54 @@
     <Hosts>
       <Host xsi:type="Document">
         <DesktopFormFactor>
-          <ExtensionPoint xsi:type="CustomPane">
-            <SourceLocation resid="residTaskpaneUrl"/>
-            <Title resid="residTaskpaneTitle"/>
+
+          <!-- THIS IS THE MAGIC -->
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <OfficeTab id="TabHome">
+              <Group id="TestGroup">
+                <Label resid="GroupLabel"/>
+                <Control xsi:type="Button" id="ShowTaskpaneButton">
+                  <Label resid="ButtonLabel"/>
+                  <Supertip>
+                    <Title resid="ButtonLabel"/>
+                    <Description resid="ButtonDescription"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon16"/>
+                    <bt:Image size="32" resid="Icon32"/>
+                    <bt:Image size="80" resid="Icon80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="TaskpaneUrl"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
           </ExtensionPoint>
+
         </DesktopFormFactor>
       </Host>
     </Hosts>
 
     <Resources>
       <bt:Urls>
-        <bt:Url id="residTaskpaneUrl" DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
+        <bt:Url id="TaskpaneUrl" DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
       </bt:Urls>
+
       <bt:ShortStrings>
-        <bt:String id="residTaskpaneTitle" DefaultValue="Test Word Add-in"/>
+        <bt:String id="GroupLabel" DefaultValue="Internal Add-in"/>
+        <bt:String id="ButtonLabel" DefaultValue="Open Add-in"/>
       </bt:ShortStrings>
+
+      <bt:LongStrings>
+        <bt:String id="ButtonDescription" DefaultValue="Opens the internal Word add-in"/>
+      </bt:LongStrings>
+
+      <bt:Images>
+        <bt:Image id="Icon16" DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
+        <bt:Image id="Icon32" DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
+        <bt:Image id="Icon80" DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
+      </bt:Images>
     </Resources>
 
   </VersionOverrides>
