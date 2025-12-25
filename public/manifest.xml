@@ -16,12 +16,12 @@
   <DisplayName DefaultValue="Test Word Add-in"/>
   <Description DefaultValue="A simple test Word add-in for internal deployment."/>
 
-  <!-- Icons (must be a valid image file extension) -->
+  <!-- Icons -->
   <IconUrl DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
   <HighResolutionIconUrl DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
   <SupportUrl DefaultValue="https://word-addin-phi.vercel.app/support.html"/>
 
-  <!-- App domains for security -->
+  <!-- App domains -->
   <AppDomains>
     <AppDomain>https://word-addin-phi.vercel.app</AppDomain>
   </AppDomains>
@@ -31,7 +31,7 @@
     <Host Name="Document"/>
   </Hosts>
 
-  <!-- Default taskpane source -->
+  <!-- Default settings -->
   <DefaultSettings>
     <SourceLocation DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
   </DefaultSettings>
@@ -40,14 +40,17 @@
   <Permissions>ReadWriteDocument</Permissions>
 
   <!-- VersionOverrides for modern taskpane add-ins -->
-  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" Version="1.0">
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+                    xsi:type="VersionOverridesV1_0"
+                    Version="1.0">
+
     <Hosts>
       <Host xsi:type="Document">
         <DesktopFormFactor>
-          <CustomPane>
+          <ExtensionPoint xsi:type="CustomPane">
             <SourceLocation resid="residTaskpaneUrl"/>
             <Title resid="residTaskpaneTitle"/>
-          </CustomPane>
+          </ExtensionPoint>
         </DesktopFormFactor>
       </Host>
     </Hosts>
@@ -60,5 +63,7 @@
         <bt:String id="residTaskpaneTitle" DefaultValue="Test Word Add-in"/>
       </bt:ShortStrings>
     </Resources>
+
   </VersionOverrides>
+
 </OfficeApp>
