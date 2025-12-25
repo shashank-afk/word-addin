@@ -24,7 +24,7 @@
   </Hosts>
 
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://my-word-addin.vercel.app/index.html"/>
+    <SourceLocation DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
   </DefaultSettings>
 
   <Permissions>ReadWriteDocument</Permissions>
@@ -42,7 +42,7 @@
     </Hosts>
     <Resources>
       <bt:Urls>
-        <bt:Url id="residTaskpaneUrl" DefaultValue="https://my-word-addin.vercel.app/index.html"/>
+        <bt:Url id="residTaskpaneUrl" DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="residTaskpaneTitle" DefaultValue="Test Word Add-in"/>
