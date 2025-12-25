@@ -5,30 +5,41 @@
            xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
            xsi:type="TaskPaneApp">
 
+  <!-- Unique ID for your add-in -->
   <Id>11111111-1111-1111-1111-111111111111</Id>
+
   <Version>1.0.0.0</Version>
   <ProviderName>Your Name or Company</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
+
+  <!-- Display info -->
   <DisplayName DefaultValue="Test Word Add-in"/>
   <Description DefaultValue="A simple test Word add-in for internal deployment."/>
-  <IconUrl DefaultValue="https://via.placeholder.com/32"/>
-  <HighResolutionIconUrl DefaultValue="https://via.placeholder.com/64"/>
-  <SupportUrl DefaultValue="https://yourdomain.com/support"/>
 
+  <!-- Icons (must be a valid image file extension) -->
+  <IconUrl DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
+  <HighResolutionIconUrl DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
+  <SupportUrl DefaultValue="https://word-addin-phi.vercel.app/support.html"/>
+
+  <!-- App domains for security -->
   <AppDomains>
-    <AppDomain>https://my-word-addin.vercel.app</AppDomain>
+    <AppDomain>https://word-addin-phi.vercel.app</AppDomain>
   </AppDomains>
 
+  <!-- Supported hosts -->
   <Hosts>
     <Host Name="Document"/>
   </Hosts>
 
+  <!-- Default taskpane source -->
   <DefaultSettings>
     <SourceLocation DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
   </DefaultSettings>
 
+  <!-- Permissions -->
   <Permissions>ReadWriteDocument</Permissions>
 
+  <!-- VersionOverrides for modern taskpane add-ins -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" Version="1.0">
     <Hosts>
       <Host xsi:type="Document">
@@ -40,6 +51,7 @@
         </DesktopFormFactor>
       </Host>
     </Hosts>
+
     <Resources>
       <bt:Urls>
         <bt:Url id="residTaskpaneUrl" DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
