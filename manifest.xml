@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+           xsi:type="TaskPaneApp">
+
+  <Id>11111111-1111-1111-1111-111111111111</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Your Name or Company</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Test Word Add-in"/>
+  <Description DefaultValue="A simple test Word add-in for internal deployment."/>
+  <IconUrl DefaultValue="https://via.placeholder.com/32"/>
+  <HighResolutionIconUrl DefaultValue="https://via.placeholder.com/64"/>
+  <SupportUrl DefaultValue="https://yourdomain.com/support"/>
+
+  <AppDomains>
+    <AppDomain>https://my-word-addin.vercel.app</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Document"/>
+  </Hosts>
+
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://my-word-addin.vercel.app/index.html"/>
+  </DefaultSettings>
+
+  <Permissions>ReadWriteDocument</Permissions>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" Version="1.0">
+    <Hosts>
+      <Host xsi:type="Document">
+        <DesktopFormFactor>
+          <CustomPane>
+            <SourceLocation resid="residTaskpaneUrl"/>
+            <Title resid="residTaskpaneTitle"/>
+          </CustomPane>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    <Resources>
+      <bt:Urls>
+        <bt:Url id="residTaskpaneUrl" DefaultValue="https://my-word-addin.vercel.app/index.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="residTaskpaneTitle" DefaultValue="Test Word Add-in"/>
+      </bt:ShortStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>
