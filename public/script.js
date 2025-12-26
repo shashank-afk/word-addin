@@ -33,8 +33,13 @@ Office.onReady((info) => {
       console.log("API response:", data);
 
       // 2️⃣ Decide what text you want to insert
-      const textToInsert =
-        `From backend:\n${JSON.stringify(data, null, 2)}\n\nInserted at: ${new Date().toISOString()}`;
+      const textToInsert = `
+Message: ${data.message}
+Timestamp: ${data.timestamp}
+Random: ${data.random}
+Final Message: ${data["final message"]}
+`;
+
 
       // 3️⃣ Insert into Word
       await Word.run(async (context) => {
