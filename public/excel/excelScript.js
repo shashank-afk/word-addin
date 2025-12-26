@@ -131,7 +131,7 @@ Office.onReady(() => {
         },
         body: JSON.stringify({
           workflow: "addin",
-          action: "testing",
+          action: "chat_message",
           app: "excel",
           message: text,
           files: attachedFiles.map(f => ({
@@ -149,28 +149,37 @@ Office.onReady(() => {
       const payload = data.DATA;
 
       // Insert response into Excel
+      let nextRow = 1;
+      
       await Excel.run(async (context) => {
         const sheet = context.workbook.worksheets.getActiveWorksheet();
         
-        // Find the next empty row
-        const usedRange = sheet.getUsedRange();
-        usedRange.load("rowCount");
-        await context.sync();
-        
-        const nextRow = usedRange.rowCount;
+        // Try to find the next empty row
+        try {
+          const usedRange = sheet.getUsedRange();
+          usedRange.load("rowCount");
+          await context.sync();
+          nextRow = usedRange.rowCount + 1;
+        } catch (error) {
+          // Sheet is empty, start at row 1
+          nextRow = 1;
+        }
         
         // Write data to cells
-        sheet.getRange(`A${nextRow + 1}`).values = [["Message:"]];
-        sheet.getRange(`B${nextRow + 1}`).values = [[payload.message]];
+        sheet.getRange(`A${nextRow}`).values = [["Message:"]];
+        sheet.getRange(`B${nextRow}`).values = [[payload.message]];
         
-        sheet.getRange(`A${nextRow + 2}`).values = [["Timestamp:"]];
-        sheet.getRange(`B${nextRow + 2}`).values = [[payload.timestamp]];
+        sheet.getRange(`A${nextRow + 1}`).values = [["Timestamp:"]];
+        sheet.getRange(`B${nextRow + 1}`).values = [[payload.timestamp]];
         
-        sheet.getRange(`A${nextRow + 3}`).values = [["Random:"]];
-        sheet.getRange(`B${nextRow + 3}`).values = [[payload.random]];
+        sheet.getRange(`A${nextRow + 2}`).values = [["Random:"]];
+        sheet.getRange(`B${nextRow + 2}`).values = [[payload.random]];
         
-        sheet.getRange(`A${nextRow + 4}`).values = [["Final Message:"]];
-        sheet.getRange(`B${nextRow + 4}`).values = [[payload["final message"]]];
+        sheet.getRange(`A${nextRow + 3}`).values = [["Final Message:"]];
+        sheet.getRange(`B${nextRow + 3}`).values = [[payload["final message"]]];
+        
+        // Add a blank row after
+        sheet.getRange(`A${nextRow + 4}`).values = [[""]];
         
         // Auto-fit columns
         sheet.getRange(`A:B`).format.autofitColumns();
@@ -179,7 +188,7 @@ Office.onReady(() => {
       });
 
       // Show assistant response in chat
-      addMessageToChat('assistant', `Response inserted into Excel at row ${nextRow + 1}: ${payload.message}`);
+      addMessageToChat('assistant', `Response inserted into Excel at row ${nextRow}: ${payload.message}`);
 
     } catch (error) {
       console.error("Error:", error);
