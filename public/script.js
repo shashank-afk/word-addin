@@ -1,23 +1,14 @@
-Office.onReady((info) => {
-  console.log("Office.js is ready");
-
+Office.onReady(() => {
   const btn = document.getElementById("insertTextBtn");
-  if (!btn) {
-    console.error("Button not found!");
-    return;
-  }
+  if (!btn) return;
 
   btn.onclick = async () => {
-    console.log("Button clicked!");
-
     try {
-      // 1️⃣ Call your backend API
       const response = await fetch("https://www.misrut.com/papi/opn", {
         method: "POST",
         headers: {
           "Accept": "application/json",
-          "Content-Type": "application/json",
-
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           workflow: "addin",
@@ -25,23 +16,19 @@ Office.onReady((info) => {
         })
       });
 
-      if (!response.ok) {
-        throw new Error(`API failed with status ${response.status}`);
-      }
-
       const data = await response.json();
       console.log("API response:", data);
 
-      // 2️⃣ Decide what text you want to insert
+      // 🔑 extract actual payload
+      const payload = data.DATA;
+
       const textToInsert = `
-Message: ${data.message}
-Timestamp: ${data.timestamp}
-Random: ${data.random}
-Final Message: ${data["final message"]}
+Message: ${payload.message}
+Timestamp: ${payload.timestamp}
+Random: ${payload.random}
+Final Message: ${payload["final message"]}
 `;
 
-
-      // 3️⃣ Insert into Word
       await Word.run(async (context) => {
         context.document.body.insertParagraph(
           textToInsert,
@@ -52,7 +39,7 @@ Final Message: ${data["final message"]}
 
     } catch (error) {
       console.error("Error:", error);
-      alert("Something went wrong: " + error.message);
+      alert(error.message);
     }
   };
 });
