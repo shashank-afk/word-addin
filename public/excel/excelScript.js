@@ -131,7 +131,7 @@ Office.onReady(() => {
         },
         body: JSON.stringify({
           workflow: "addin",
-          action: "chat_message",
+          action: "testing",
           app: "excel",
           message: text,
           files: attachedFiles.map(f => ({
