@@ -284,18 +284,28 @@
       const appTitle = document.getElementById('appTitle');
       const script = document.createElement('script');
       
+      // Add onload handler to ensure script executes
+      script.onload = () => {
+        console.log('Script loaded successfully');
+      };
+      
+      script.onerror = () => {
+        console.error('Failed to load script');
+      };
+      
       if (info.host === Office.HostType.Word) {
         appTitle.textContent = 'Word Assistant';
         script.src = 'word/script.js';
       } else if (info.host === Office.HostType.Excel) {
         appTitle.textContent = 'Excel Assistant';
-        script.src = 'excel/script.js';
+        script.src = 'excel/excelScript.js';
       } else {
         appTitle.textContent = 'Office Assistant';
         script.src = 'word/script.js'; // fallback
       }
       
       document.body.appendChild(script);
+      console.log('Loading script:', script.src);
     });
   </script>
 </body>
