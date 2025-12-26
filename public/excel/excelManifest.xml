@@ -4,13 +4,13 @@
            xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
            xsi:type="TaskPaneApp">
 
-  <Id>7e5d2b81-1f4c-4a7b-ae8f-5d3c2f1e8a72</Id>
+  <Id>7e5d2b81-124c-4a7b-ae8f-5d3c2f1e8a72</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>Internal Test</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
 
-  <DisplayName DefaultValue="Internal Test Add-in"/>
-  <Description DefaultValue="Internal Excel Add-in deployed via Admin Center"/>
+  <DisplayName DefaultValue="excelInternal Test Add-in"/>
+  <Description DefaultValue="manifestonlyInternal Excel Add-in deployed via Admin Center"/>
 
   <IconUrl DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
   <HighResolutionIconUrl DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>

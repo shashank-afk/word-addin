@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tests Word Add-in</title>
+  <title>Office Add-in</title>
   
   <!-- Load Office.js FIRST -->
   <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
@@ -243,7 +243,7 @@
 </head>
 <body>
   <div class="header">
-    <h1>Word Assistant</h1>
+    <h1 id="appTitle">Office Assistant</h1>
   </div>
 
   <div class="chat-container" id="chatContainer">
@@ -278,7 +278,25 @@
     <input type="file" id="fileInput" multiple accept="*/*">
   </div>
 
-  <!-- Load script.js at the end -->
-  <script src="script.js"></script>
+  <script>
+    // Detect which Office app and load the appropriate script
+    Office.onReady((info) => {
+      const appTitle = document.getElementById('appTitle');
+      const script = document.createElement('script');
+      
+      if (info.host === Office.HostType.Word) {
+        appTitle.textContent = 'Word Assistant';
+        script.src = 'word/script.js';
+      } else if (info.host === Office.HostType.Excel) {
+        appTitle.textContent = 'Excel Assistant';
+        script.src = 'excel/script.js';
+      } else {
+        appTitle.textContent = 'Office Assistant';
+        script.src = 'word/script.js'; // fallback
+      }
+      
+      document.body.appendChild(script);
+    });
+  </script>
 </body>
 </html>
