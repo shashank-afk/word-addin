@@ -49,6 +49,8 @@
       border-radius: 12px;
       max-width: 85%;
       line-height: 1.5;
+      width: fit-content;
+      word-wrap: break-word;
     }
 
     .message.user {
@@ -141,10 +143,15 @@
       max-height: 120px;
       line-height: 1.5;
       font-family: inherit;
+      overflow: hidden;
     }
 
     #messageInput::placeholder {
       color: #9ca3af;
+    }
+
+    #messageInput::-webkit-scrollbar {
+      display: none;
     }
 
     .send-button {
@@ -255,7 +262,7 @@
 
       <textarea 
         id="messageInput" 
-        placeholder="Message Word Assistant..." 
+        placeholder="Type..." 
         rows="1"
       ></textarea>
 
