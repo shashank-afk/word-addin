@@ -19,21 +19,33 @@ Office.onReady(() => {
       const data = await response.json();
       console.log("API response:", data);
 
-      // 🔑 extract actual payload
+      // Extract actual payload
       const payload = data.DATA;
 
-      const textToInsert =
-        `Message: ${payload.message}\n\n` +
-        `Timestamp: ${payload.timestamp}\n\n` +
-        `Random: ${payload.random}\n\n` +
-        `Final Message: ${payload["final message"]}`;
-
-
       await Word.run(async (context) => {
-        context.document.body.insertParagraph(
-          textToInsert,
+        const body = context.document.body;
+        
+        // Insert each line as a separate paragraph
+        body.insertParagraph(
+          `Message: ${payload.message}`,
           Word.InsertLocation.end
         );
+        
+        body.insertParagraph(
+          `Timestamp: ${payload.timestamp}`,
+          Word.InsertLocation.end
+        );
+        
+        body.insertParagraph(
+          `Random: ${payload.random}`,
+          Word.InsertLocation.end
+        );
+        
+        body.insertParagraph(
+          `Final Message: ${payload["final message"]}`,
+          Word.InsertLocation.end
+        );
+        
         await context.sync();
       });
 
