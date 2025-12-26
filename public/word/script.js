@@ -132,7 +132,7 @@ Office.onReady(() => {
         body: JSON.stringify({
           workflow: "addin",
           action: "testing",
-          message: text,
+          USER_INPUT: text,
           files: attachedFiles.map(f => ({
             name: f.name,
             size: f.size,
