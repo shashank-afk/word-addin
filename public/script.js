@@ -22,12 +22,12 @@ Office.onReady(() => {
       // 🔑 extract actual payload
       const payload = data.DATA;
 
-      const textToInsert = `
-Message: ${payload.message}
-Timestamp: ${payload.timestamp}
-Random: ${payload.random}
-Final Message: ${payload["final message"]}
-`;
+      const textToInsert =
+        `Message: ${payload.message}\n\n` +
+        `Timestamp: ${payload.timestamp}\n\n` +
+        `Random: ${payload.random}\n\n` +
+        `Final Message: ${payload["final message"]}`;
+
 
       await Word.run(async (context) => {
         context.document.body.insertParagraph(
