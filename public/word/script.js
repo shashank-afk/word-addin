@@ -147,21 +147,17 @@ Office.onReady(() => {
       // Extract payload
       const payload = data.DATA;
 
-      // Insert response into Word document
-      await Word.run(async (context) => {
-        const body = context.document.body;
-        
-        body.insertParagraph(`Message: ${payload.message}`, Word.InsertLocation.end);
-        body.insertParagraph(`Timestamp: ${payload.timestamp}`, Word.InsertLocation.end);
-        body.insertParagraph(`Random: ${payload.random}`, Word.InsertLocation.end);
-        body.insertParagraph(`Final Message: ${payload["final message"]}`, Word.InsertLocation.end);
-        body.insertParagraph("", Word.InsertLocation.end); // blank line
-        
-        await context.sync();
-      });
+      // Insert ai_reply into Word document
+      if (payload.ai_reply) {
+        await Word.run(async (context) => {
+          const body = context.document.body;
+          body.insertParagraph(payload.ai_reply, Word.InsertLocation.end);
+          await context.sync();
+        });
 
-      // Show assistant response in chat
-      addMessageToChat('assistant', `Response inserted into document: ${payload.message}`);
+        // Show AI reply in chat
+        addMessageToChat('assistant', payload.ai_reply);
+      }
 
     } catch (error) {
       console.error("Error:", error);

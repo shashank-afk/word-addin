@@ -132,7 +132,6 @@ Office.onReady(() => {
         body: JSON.stringify({
           workflow: "addin",
           action: "testing",
-          app: "excel",
           message: text,
           files: attachedFiles.map(f => ({
             name: f.name,
@@ -148,47 +147,27 @@ Office.onReady(() => {
       // Extract payload
       const payload = data.DATA;
 
-      // Insert response into Excel
-      let nextRow = 1;
-      
-      await Excel.run(async (context) => {
-        const sheet = context.workbook.worksheets.getActiveWorksheet();
-        
-        // Try to find the next empty row
-        try {
+      // Insert ai_reply into Excel (Column A, next available row)
+      if (payload.ai_reply) {
+        await Excel.run(async (context) => {
+          const sheet = context.workbook.worksheets.getActiveWorksheet();
+          
+          // Get the used range to find the next empty row
           const usedRange = sheet.getUsedRange();
           usedRange.load("rowCount");
           await context.sync();
-          nextRow = usedRange.rowCount + 1;
-        } catch (error) {
-          // Sheet is empty, start at row 1
-          nextRow = 1;
-        }
-        
-        // Write data to cells
-        sheet.getRange(`A${nextRow}`).values = [["Message:"]];
-        sheet.getRange(`B${nextRow}`).values = [[payload.message]];
-        
-        sheet.getRange(`A${nextRow + 1}`).values = [["Timestamp:"]];
-        sheet.getRange(`B${nextRow + 1}`).values = [[payload.timestamp]];
-        
-        sheet.getRange(`A${nextRow + 2}`).values = [["Random:"]];
-        sheet.getRange(`B${nextRow + 2}`).values = [[payload.random]];
-        
-        sheet.getRange(`A${nextRow + 3}`).values = [["Final Message:"]];
-        sheet.getRange(`B${nextRow + 3}`).values = [[payload["final message"]]];
-        
-        // Add a blank row after
-        sheet.getRange(`A${nextRow + 4}`).values = [[""]];
-        
-        // Auto-fit columns
-        sheet.getRange(`A:B`).format.autofitColumns();
-        
-        await context.sync();
-      });
+          
+          // Insert in next row, column A
+          const nextRow = usedRange.rowCount;
+          const targetCell = sheet.getCell(nextRow, 0); // Column A (index 0)
+          targetCell.values = [[payload.ai_reply]];
+          
+          await context.sync();
+        });
 
-      // Show assistant response in chat
-      addMessageToChat('assistant', `Response inserted into Excel at row ${nextRow}: ${payload.message}`);
+        // Show AI reply in chat
+        addMessageToChat('assistant', payload.ai_reply);
+      }
 
     } catch (error) {
       console.error("Error:", error);
