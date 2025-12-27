@@ -95,10 +95,10 @@
       </bt:Images>
 
       <bt:Urls>
-        <bt:Url id="TaskpaneUrl" DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
-        <bt:Url id="Functions.Script.Url" DefaultValue="https://word-addin-phi.vercel.app/functions.js"/>
-        <bt:Url id="Functions.Page.Url" DefaultValue="https://word-addin-phi.vercel.app/functions.html"/>
-        <bt:Url id="Functions.Metadata.Url" DefaultValue="https://word-addin-phi.vercel.app/functions.json"/>
+      <bt:Url id="TaskpaneUrl" DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
+      <bt:Url id="Functions.Script.Url" DefaultValue="https://word-addin-phi.vercel.app/excel/functions.js"/>
+      <bt:Url id="Functions.Page.Url" DefaultValue="https://word-addin-phi.vercel.app/excel/functions.html"/>
+      <bt:Url id="Functions.Metadata.Url" DefaultValue="https://word-addin-phi.vercel.app/excel/functions.json"/>
       </bt:Urls>
 
       <bt:ShortStrings>
