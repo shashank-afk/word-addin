@@ -1,4 +1,5 @@
 let attachedFiles = [];
+let conversationHistory = []; // Store conversation context
 
 Office.onReady(() => {
   const messageInput = document.getElementById('messageInput');
@@ -113,6 +114,19 @@ Office.onReady(() => {
     chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 
+  // Convert file to base64
+  async function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result.split(',')[1]; // Remove data:mime;base64, prefix
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   // Send message and call API
   async function sendMessage() {
     const text = messageInput.value.trim();
@@ -122,6 +136,23 @@ Office.onReady(() => {
     addMessageToChat('user', text, attachedFiles.map(f => f.name));
 
     try {
+      // Prepare files with base64 content
+      const filesData = await Promise.all(
+        attachedFiles.map(async (file) => ({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          content: await fileToBase64(file)
+        }))
+      );
+
+      // Add to conversation history
+      conversationHistory.push({
+        role: 'user',
+        message: text,
+        files: filesData
+      });
+
       // Call your backend API
       const response = await fetch("https://www.misrut.com/papi/opn", {
         method: "POST",
@@ -133,11 +164,8 @@ Office.onReady(() => {
           workflow: "addin",
           action: "testing",
           USER_INPUT: text,
-          files: attachedFiles.map(f => ({
-            name: f.name,
-            size: f.size,
-            type: f.type
-          }))
+          files: filesData,
+          conversation_history: conversationHistory
         })
       });
 
@@ -147,8 +175,14 @@ Office.onReady(() => {
       // Extract payload
       const payload = data.DATA;
 
-      // Insert ai_reply into Word document
+      // Add AI response to conversation history
       if (payload.ai_reply) {
+        conversationHistory.push({
+          role: 'assistant',
+          message: payload.ai_reply
+        });
+
+        // Insert ai_reply into Word document
         await Word.run(async (context) => {
           const body = context.document.body;
           body.insertParagraph(payload.ai_reply, Word.InsertLocation.end);
