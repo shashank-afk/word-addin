@@ -1,0 +1,26 @@
+{
+  "functions": [
+    {
+      "id": "ASKADDIN",
+      "name": "ASKADDIN",
+      "description": "Ask a question using your add-in AI",
+      "helpUrl": "https://word-addin-phi.vercel.app/help",
+      "result": {
+        "type": "string",
+        "dimensionality": "scalar"
+      },
+      "parameters": [
+        {
+          "name": "question",
+          "description": "Your question or prompt",
+          "type": "string",
+          "dimensionality": "scalar"
+        }
+      ],
+      "options": {
+        "stream": false,
+        "cancelable": true
+      }
+    }
+  ]
+}

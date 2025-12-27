@@ -9,8 +9,8 @@
   <ProviderName>Internal Test</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
 
-  <DisplayName DefaultValue="excelInternal Test Add-in"/>
-  <Description DefaultValue="manifestonlyInternal Excel Add-in deployed via Admin Center"/>
+  <DisplayName DefaultValue="Internal Test Add-in"/>
+  <Description DefaultValue="Internal Excel Add-in deployed via Admin Center"/>
 
   <IconUrl DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
   <HighResolutionIconUrl DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
@@ -30,15 +30,14 @@
 
   <Permissions>ReadWriteDocument</Permissions>
 
-  <!-- REQUIRED FOR ADMIN CENTER -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
                     xsi:type="VersionOverridesV1_0">
 
     <Hosts>
       <Host xsi:type="Workbook">
+        
+        <!-- Task Pane Button -->
         <DesktopFormFactor>
-
-          <!-- THIS IS THE MAGIC -->
           <ExtensionPoint xsi:type="PrimaryCommandSurface">
             <OfficeTab id="TabHome">
               <Group id="TestGroup">
@@ -67,13 +66,27 @@
               </Group>
             </OfficeTab>
           </ExtensionPoint>
-
         </DesktopFormFactor>
+
+        <!-- Custom Functions -->
+        <AllFormFactors>
+          <ExtensionPoint xsi:type="CustomFunctions">
+            <Script>
+              <SourceLocation resid="Functions.Script.Url"/>
+            </Script>
+            <Page>
+              <SourceLocation resid="Functions.Page.Url"/>
+            </Page>
+            <Metadata>
+              <SourceLocation resid="Functions.Metadata.Url"/>
+            </Metadata>
+            <Namespace resid="Functions.Namespace"/>
+          </ExtensionPoint>
+        </AllFormFactors>
+
       </Host>
     </Hosts>
-<Functions>
-  <FunctionFile resid="FunctionsFile" />
-</Functions>
+
     <Resources>
       <bt:Images>
         <bt:Image id="Icon16" DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
@@ -83,12 +96,15 @@
 
       <bt:Urls>
         <bt:Url id="TaskpaneUrl" DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
-        <bt:Url id="FunctionsFile" DefaultValue="https://word-addin-phi.vercel.app/functions.json"/>
+        <bt:Url id="Functions.Script.Url" DefaultValue="https://word-addin-phi.vercel.app/functions.js"/>
+        <bt:Url id="Functions.Page.Url" DefaultValue="https://word-addin-phi.vercel.app/functions.html"/>
+        <bt:Url id="Functions.Metadata.Url" DefaultValue="https://word-addin-phi.vercel.app/functions.json"/>
       </bt:Urls>
 
       <bt:ShortStrings>
         <bt:String id="GroupLabel" DefaultValue="Internal Add-in"/>
         <bt:String id="ButtonLabel" DefaultValue="Open Add-in"/>
+        <bt:String id="Functions.Namespace" DefaultValue="ASKADDIN"/>
       </bt:ShortStrings>
 
       <bt:LongStrings>
