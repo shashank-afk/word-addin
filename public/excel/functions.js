@@ -3,6 +3,10 @@ let chatHistory = [];
 
 // Register the custom function
 CustomFunctions.associate("ASKADDIN", askAddin);
+console.log("functions.js LOADED!");
+
+CustomFunctions.associate("ASKADDIN", askAddin);
+console.log("ASKADDIN function associated!");
 
 /**
  * Ask the add-in AI a question with chat history
@@ -12,6 +16,8 @@ CustomFunctions.associate("ASKADDIN", askAddin);
  */
 async function askAddin(question) {
   try {
+    console.log("askAddin called with:", question);
+    return "Response: " + question;
     // Get user's Microsoft token for security
     const token = await OfficeRuntime.auth.getAccessToken({
       allowSignInPrompt: true,
@@ -36,13 +42,13 @@ async function askAddin(question) {
     }
 
     const data = await response.json();
-    
+
     // Extract just the AI reply
     const aiReply = data.DATA.ai_reply;
-    
+
     // Update chat history for next call
     chatHistory = data.DATA.conversation_history || chatHistory;
-    
+
     // Return clean response to cell
     return aiReply;
 
