@@ -1,5 +1,6 @@
 let attachedFiles = [];
-let conversationHistory = []; // Store conversation context
+let sessionId = null; // Store session ID from backend
+let conversationHistory = []; // Store conversation history from backend
 
 Office.onReady(() => {
   const messageInput = document.getElementById('messageInput');
@@ -136,22 +137,26 @@ Office.onReady(() => {
     addMessageToChat('user', text, attachedFiles.map(f => f.name));
 
     try {
-      // Prepare files with base64 content
-      const filesData = await Promise.all(
-        attachedFiles.map(async (file) => ({
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          content: await fileToBase64(file)
-        }))
-      );
+      // Build payload based on whether this is first call or subsequent
+      const payload = {
+        workflow: "addin_testing",
+        action: "test",
+        USER_INPUT: text
+      };
 
-      // Add to conversation history
-      conversationHistory.push({
-        role: 'user',
-        message: text,
-        files: filesData
-      });
+      // Add SESSION_ID and CONVERSATION_HISTORY if they exist (subsequent calls)
+      if (sessionId) {
+        payload.SESSION_ID = sessionId;
+      }
+      if (conversationHistory && conversationHistory.length > 0) {
+        payload.CONVERSATION_HISTORY = conversationHistory;
+      }
+
+      // Add FILE only if there's a new file to upload (first call or new file)
+      if (attachedFiles.length > 0) {
+        const file = attachedFiles[0]; // Take first file (assuming single PDF)
+        payload.FILE = await fileToBase64(file);
+      }
 
       // Call your backend API
       const response = await fetch("https://www.misrut.com/papi/opn", {
@@ -160,37 +165,33 @@ Office.onReady(() => {
           "Accept": "application/json",
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          workflow: "addin",
-          action: "testing",
-          USER_INPUT: text,
-          files: filesData,
-          conversation_history: conversationHistory
-        })
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json();
       console.log("API response:", data);
 
-      // Extract payload
-      const payload = data.DATA;
+      // Extract payload from DATA wrapper
+      const responseData = data.DATA;
 
-      // Add AI response to conversation history
-      if (payload.ai_reply) {
-        conversationHistory.push({
-          role: 'assistant',
-          message: payload.ai_reply
-        });
+      // Update session state from backend response
+      if (responseData.session_id) {
+        sessionId = responseData.session_id;
+      }
+      if (responseData.conversation_history) {
+        conversationHistory = responseData.conversation_history;
+      }
 
-        // Insert ai_reply into Word document
+      // Insert ai_reply into Word document
+      if (responseData.ai_reply) {
         await Word.run(async (context) => {
           const body = context.document.body;
-          body.insertParagraph(payload.ai_reply, Word.InsertLocation.end);
+          body.insertParagraph(responseData.ai_reply, Word.InsertLocation.end);
           await context.sync();
         });
 
         // Show AI reply in chat
-        addMessageToChat('assistant', payload.ai_reply);
+        addMessageToChat('assistant', responseData.ai_reply);
       }
 
     } catch (error) {
