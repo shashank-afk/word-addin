@@ -139,8 +139,8 @@ Office.onReady(() => {
     try {
       // Build payload based on whether this is first call or subsequent
       const payload = {
-        workflow: "addin_testing",
-        action: "test",
+         workflow: "addin",
+        action: "testing",
         USER_INPUT: text
       };
 
