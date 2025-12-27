@@ -2,6 +2,7 @@
 let chatHistory = [];
 
 // Register the custom function
+console.log("functions.js loaded");
 CustomFunctions.associate("ASKADDIN", askAddin);
 console.log("functions.js LOADED!");
 
@@ -14,7 +15,7 @@ console.log("ASKADDIN function associated!");
  * @param {string} question The question to ask
  * @returns {Promise<string>} The AI's response
  */
-async function askAddin(question) {
+async function ASKADDIN(question) {
   try {
     console.log("askAddin called with:", question);
     return "Response: " + question;
