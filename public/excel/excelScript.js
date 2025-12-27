@@ -162,8 +162,8 @@ Office.onReady(() => {
         },
         body: JSON.stringify({
           workflow: "addin",
-          action: "chat_message",
-          message: text,
+          action: "testing",
+          USER_INPUT: text,
           files: filesData,
           conversation_history: conversationHistory
         })
