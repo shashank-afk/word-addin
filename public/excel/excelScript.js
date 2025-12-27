@@ -175,11 +175,36 @@ Office.onReady(() => {
       // Extract payload
       const payload = data.DATA;
 
-      // Add AI response to conversation history
+      // Add AI response to conversation history and insert into Excel
       if (payload.ai_reply) {
         conversationHistory.push({
           role: 'assistant',
           message: payload.ai_reply
+        });
+
+        // Insert ai_reply into Excel - split by newlines and put each in separate rows
+        await Excel.run(async (context) => {
+          const sheet = context.workbook.worksheets.getActiveWorksheet();
+          
+          // Get the used range to find the next empty row
+          const usedRange = sheet.getUsedRange();
+          usedRange.load("rowCount");
+          await context.sync();
+          
+          // Split the AI reply by newlines to get individual items
+          const items = payload.ai_reply
+            .split('\n')
+            .map(item => item.trim())
+            .filter(item => item.length > 0);
+
+          // Insert each item in a new row, column A
+          items.forEach((item, index) => {
+            const nextRow = usedRange.rowCount + index;
+            const targetCell = sheet.getCell(nextRow, 0); // Column A (index 0)
+            targetCell.values = [[item]];
+          });
+          
+          await context.sync();
         });
 
         // Show AI reply in chat
