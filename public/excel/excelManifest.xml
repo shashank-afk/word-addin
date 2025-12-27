@@ -30,8 +30,11 @@
 
   <Permissions>ReadWriteDocument</Permissions>
 
-  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
-                    xsi:type="VersionOverridesV1_0">
+  <VersionOverrides
+    xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+    xsi:type="VersionOverridesV1_1"
+    Version="1.1">
+
 
     <Hosts>
       <Host xsi:type="Workbook">
@@ -104,7 +107,7 @@
       <bt:ShortStrings>
         <bt:String id="GroupLabel" DefaultValue="Internal Add-in"/>
         <bt:String id="ButtonLabel" DefaultValue="Open Add-in"/>
-        <bt:String id="Functions.Namespace" DefaultValue="ASKADDIN"/>
+        <bt:String id="Functions.Namespace" DefaultValue="YOYO"/>
       </bt:ShortStrings>
 
       <bt:LongStrings>
