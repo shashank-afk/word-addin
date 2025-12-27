@@ -1,4 +1,5 @@
 let attachedFiles = [];
+let conversationHistory = []; // Store conversation context
 
 Office.onReady(() => {
   const messageInput = document.getElementById('messageInput');
@@ -8,6 +9,11 @@ Office.onReady(() => {
   const inputWrapper = document.getElementById('inputWrapper');
   const attachedFilesContainer = document.getElementById('attachedFiles');
   const chatContainer = document.getElementById('chatContainer');
+
+  // Register custom Excel function
+  if (typeof CustomFunctions !== 'undefined') {
+    CustomFunctions.associate("MYADDIN", myAddinFunction);
+  }
 
   // Auto-resize textarea
   messageInput.addEventListener('input', () => {
@@ -113,6 +119,19 @@ Office.onReady(() => {
     chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 
+  // Convert file to base64
+  async function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result.split(',')[1]; // Remove data:mime;base64, prefix
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   // Send message and call API
   async function sendMessage() {
     const text = messageInput.value.trim();
@@ -122,6 +141,23 @@ Office.onReady(() => {
     addMessageToChat('user', text, attachedFiles.map(f => f.name));
 
     try {
+      // Prepare files with base64 content
+      const filesData = await Promise.all(
+        attachedFiles.map(async (file) => ({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          content: await fileToBase64(file)
+        }))
+      );
+
+      // Add to conversation history
+      conversationHistory.push({
+        role: 'user',
+        message: text,
+        files: filesData
+      });
+
       // Call your backend API
       const response = await fetch("https://www.misrut.com/papi/opn", {
         method: "POST",
@@ -130,14 +166,11 @@ Office.onReady(() => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          workflow: "addin",
+       workflow: "addin",
           action: "testing",
           USER_INPUT: text,
-          files: attachedFiles.map(f => ({
-            name: f.name,
-            size: f.size,
-            type: f.type
-          }))
+          files: filesData,
+          conversation_history: conversationHistory
         })
       });
 
@@ -147,22 +180,11 @@ Office.onReady(() => {
       // Extract payload
       const payload = data.DATA;
 
-      // Insert ai_reply into Excel (Column A, next available row)
+      // Add AI response to conversation history
       if (payload.ai_reply) {
-        await Excel.run(async (context) => {
-          const sheet = context.workbook.worksheets.getActiveWorksheet();
-          
-          // Get the used range to find the next empty row
-          const usedRange = sheet.getUsedRange();
-          usedRange.load("rowCount");
-          await context.sync();
-          
-          // Insert in next row, column A
-          const nextRow = usedRange.rowCount;
-          const targetCell = sheet.getCell(nextRow, 0); // Column A (index 0)
-          targetCell.values = [[payload.ai_reply]];
-          
-          await context.sync();
+        conversationHistory.push({
+          role: 'assistant',
+          message: payload.ai_reply
         });
 
         // Show AI reply in chat
@@ -181,6 +203,79 @@ Office.onReady(() => {
     renderAttachedFiles();
     updateSendButton();
   }
+
+  // Custom function handler for =MYADDIN()
+  window.myAddinFunction = async function(query) {
+    try {
+      // Add to conversation history
+      conversationHistory.push({
+        role: 'user',
+        message: query
+      });
+
+      // Call API
+      const response = await fetch("https://www.misrut.com/papi/opn", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          workflow: "addin",
+          action: "formula_query",
+          message: query,
+          conversation_history: conversationHistory
+        })
+      });
+
+      const data = await response.json();
+      const payload = data.DATA;
+
+      // Add AI response to conversation history
+      if (payload.ai_reply) {
+        conversationHistory.push({
+          role: 'assistant',
+          message: payload.ai_reply
+        });
+
+        // Parse response and insert into cells
+        await Excel.run(async (context) => {
+          const sheet = context.workbook.worksheets.getActiveWorksheet();
+          const selectedRange = context.workbook.getSelectedRange();
+          selectedRange.load("rowIndex, columnIndex");
+          await context.sync();
+
+          // Split the AI reply by newlines to get individual items
+          const items = payload.ai_reply
+            .split('\n')
+            .map(item => item.trim())
+            .filter(item => item.length > 0);
+
+          // Insert each item in a new row below the selected cell
+          items.forEach((item, index) => {
+            const targetRow = selectedRange.rowIndex + index + 1;
+            const targetCol = selectedRange.columnIndex;
+            const targetCell = sheet.getCell(targetRow, targetCol);
+            targetCell.values = [[item]];
+          });
+
+          await context.sync();
+        });
+
+        // Show in chat UI
+        addMessageToChat('user', query);
+        addMessageToChat('assistant', payload.ai_reply);
+
+        return "Data inserted below";
+      }
+
+      return "No response from AI";
+
+    } catch (error) {
+      console.error("Formula error:", error);
+      return `Error: ${error.message}`;
+    }
+  };
 
   // Send on Enter (without Shift)
   messageInput.addEventListener('keydown', (e) => {

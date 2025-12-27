@@ -71,7 +71,9 @@
         </DesktopFormFactor>
       </Host>
     </Hosts>
-
+<Functions>
+  <FunctionFile resid="FunctionsFile" />
+</Functions>
     <Resources>
       <bt:Images>
         <bt:Image id="Icon16" DefaultValue="https://word-addin-phi.vercel.app/icon.png"/>
@@ -81,6 +83,7 @@
 
       <bt:Urls>
         <bt:Url id="TaskpaneUrl" DefaultValue="https://word-addin-phi.vercel.app/index.html"/>
+        <bt:Url id="FunctionsFile" DefaultValue="https://word-addin-phi.vercel.app/functions.json"/>
       </bt:Urls>
 
       <bt:ShortStrings>
