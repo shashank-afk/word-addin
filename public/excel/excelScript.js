@@ -153,6 +153,7 @@ Office.onReady(() => {
         files: filesData
       });
 
+      console.log("Files being sent:", filesData);
       // Call your backend API
       const response = await fetch("https://www.misrut.com/papi/opn", {
         method: "POST",
