@@ -10,11 +10,6 @@ Office.onReady(() => {
   const attachedFilesContainer = document.getElementById('attachedFiles');
   const chatContainer = document.getElementById('chatContainer');
 
-  // Register custom Excel function
-  if (typeof CustomFunctions !== 'undefined') {
-    CustomFunctions.associate("MYADDIN", myAddinFunction);
-  }
-
   // Auto-resize textarea
   messageInput.addEventListener('input', () => {
     messageInput.style.height = 'auto';
@@ -166,9 +161,9 @@ Office.onReady(() => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-       workflow: "addin",
-          action: "testing",
-          USER_INPUT: text,
+          workflow: "addin",
+          action: "chat_message",
+          message: text,
           files: filesData,
           conversation_history: conversationHistory
         })
@@ -203,79 +198,6 @@ Office.onReady(() => {
     renderAttachedFiles();
     updateSendButton();
   }
-
-  // Custom function handler for =MYADDIN()
-  window.myAddinFunction = async function(query) {
-    try {
-      // Add to conversation history
-      conversationHistory.push({
-        role: 'user',
-        message: query
-      });
-
-      // Call API
-      const response = await fetch("https://www.misrut.com/papi/opn", {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          workflow: "addin",
-          action: "formula_query",
-          message: query,
-          conversation_history: conversationHistory
-        })
-      });
-
-      const data = await response.json();
-      const payload = data.DATA;
-
-      // Add AI response to conversation history
-      if (payload.ai_reply) {
-        conversationHistory.push({
-          role: 'assistant',
-          message: payload.ai_reply
-        });
-
-        // Parse response and insert into cells
-        await Excel.run(async (context) => {
-          const sheet = context.workbook.worksheets.getActiveWorksheet();
-          const selectedRange = context.workbook.getSelectedRange();
-          selectedRange.load("rowIndex, columnIndex");
-          await context.sync();
-
-          // Split the AI reply by newlines to get individual items
-          const items = payload.ai_reply
-            .split('\n')
-            .map(item => item.trim())
-            .filter(item => item.length > 0);
-
-          // Insert each item in a new row below the selected cell
-          items.forEach((item, index) => {
-            const targetRow = selectedRange.rowIndex + index + 1;
-            const targetCol = selectedRange.columnIndex;
-            const targetCell = sheet.getCell(targetRow, targetCol);
-            targetCell.values = [[item]];
-          });
-
-          await context.sync();
-        });
-
-        // Show in chat UI
-        addMessageToChat('user', query);
-        addMessageToChat('assistant', payload.ai_reply);
-
-        return "Data inserted below";
-      }
-
-      return "No response from AI";
-
-    } catch (error) {
-      console.error("Formula error:", error);
-      return `Error: ${error.message}`;
-    }
-  };
 
   // Send on Enter (without Shift)
   messageInput.addEventListener('keydown', (e) => {
